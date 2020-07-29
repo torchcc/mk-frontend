@@ -1,0 +1,13 @@
+export const order = {
+    state: {
+        orderList:[],
+    },
+    mutations: {
+        setOrderList(state,orderList){
+            state.orderList = orderList
+        },
+        clearOrderList(state){
+            state.orderList = []
+        }
+    }
+}
