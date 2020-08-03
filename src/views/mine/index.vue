@@ -40,13 +40,13 @@
               <van-icon class="mine_icons" name="orders-o" />
               <p>待预约</p>
             </van-col>
+            <van-col @click="goToDetail(5)" class="mine_item" span="6">
+              <van-icon class="mine_icons" name="comment" />
+              <p>已完成</p>
+            </van-col>
             <van-col @click="goToDetail(3)" class="mine_item" span="6">
               <van-icon class="mine_icons" name="comment" />
-              <p>待评价</p>
-            </van-col>
-            <van-col @click="goToDetail(4)" class="mine_item" span="6">
-              <van-icon class="mine_icons" name="comment" />
-              <p>退款/售后</p>
+              <p>已退款</p>
             </van-col>
           </van-row>
         </div>
