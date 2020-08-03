@@ -198,9 +198,9 @@
         <van-goods-action-button @click="clearOrder" text="取消订单" type="info" />
         <van-goods-action-button @click="toPay" text="立即购买" type="danger" />
       </van-goods-action>
-      <van-goods-action v-if="state==2">
-        <van-goods-action-button @click="clearOrder(true)" text="申请退款" type="danger" />
-      </van-goods-action>
+<!--      <van-goods-action v-if="state==2">-->
+<!--        <van-goods-action-button @click="clearOrder(true)" text="申请退款" type="danger" />-->
+<!--      </van-goods-action>-->
     </div>
 
     <van-dialog @confirm="reason()" show-cancel-button title="标题" v-model="show">
