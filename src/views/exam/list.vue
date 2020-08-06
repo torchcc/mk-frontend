@@ -5,7 +5,7 @@
     <div class="exam_search">
       <!--搜索框-->
       <mt-field placeholder="请输入搜索条件" v-model="name">
-        <mt-button @click="searchPkg" size="small">搜索</mt-button>
+        <mt-button @click="searchPkgF" size="small">搜索</mt-button>
       </mt-field>
       <div class="searchInfoBox">
         <div
@@ -157,6 +157,8 @@ export default {
   name: "list",
   data() {
     return {
+      page_no: 1,
+      has_next: 1,
       value: "",
       popupVisible: false,
       name: "",
@@ -243,18 +245,7 @@ export default {
       ],
       activeIds: [],
       activeIndex: 0,
-      res: [
-        {
-          avatar_url: "",
-          category_name: "",
-          category_id: "",
-          hospital_id: "",
-          hospital_name: "",
-          level: 0,
-          sold: 0,
-          name: ""
-        }
-      ],
+      res: [],
       active: "tab-container1",
       isNavFlag: false,
       id1: "推荐排序",
@@ -271,8 +262,61 @@ export default {
     this.searchPkg();
     this.getDiseases();
   },
-
+  mounted() {
+    function getScrollTop() {
+      var scrollTop = 0,
+        bodyScrollTop = 0,
+        documentScrollTop = 0;
+      if (document.body) {
+        bodyScrollTop = document.body.scrollTop;
+      }
+      if (document.documentElement) {
+        documentScrollTop = document.documentElement.scrollTop;
+      }
+      scrollTop =
+        bodyScrollTop - documentScrollTop > 0
+          ? bodyScrollTop
+          : documentScrollTop;
+      return scrollTop;
+    }
+    //文档的总高度
+    function getScrollHeight() {
+      var scrollHeight = 0,
+        bodyScrollHeight = 0,
+        documentScrollHeight = 0;
+      if (document.body) {
+        bodyScrollHeight = document.body.scrollHeight;
+      }
+      if (document.documentElement) {
+        documentScrollHeight = document.documentElement.scrollHeight;
+      }
+      scrollHeight =
+        bodyScrollHeight - documentScrollHeight > 0
+          ? bodyScrollHeight
+          : documentScrollHeight;
+      return scrollHeight;
+    }
+    //浏览器视口的高度
+    function getWindowHeight() {
+      var windowHeight = 0;
+      if (document.compatMode == "CSS1Compat") {
+        windowHeight = document.documentElement.clientHeight;
+      } else {
+        windowHeight = document.body.clientHeight;
+      }
+      return windowHeight;
+    }
+    window.onscroll = () => {
+      if (getScrollTop() + getWindowHeight() == getScrollHeight()) {
+        this.searchPkg();
+      }
+    };
+  },
   methods: {
+    searchPkgF(){
+      this.initPageList()
+      this.searchPkg()
+    },
     resetActiveIds() {
       this.activeIds = [];
       this.level = 0;
@@ -299,20 +343,30 @@ export default {
       });
       this.$set(this.items, "2", illness);
     },
+    initPageList(){
+      this.res = []
+      this.page_no = 1
+      this.has_next = 1
+      document.documentElement.scrollTop = 0
+    },
     async searchPkg() {
-      const res = await pkg({
-        page_no: 1,
-        page_size: 10,
-        name: this.name,
-        order_by: this.order_by,
-        category_id: this.category_id,
-        max_price: this.max_price,
-        min_price: this.min_price,
-        target: this.target,
-        disease_id: this.disease,
-        level: this.level
-      });
-      this.res = res.data.list;
+      if (this.has_next == 1) {
+        const res = await pkg({
+          page_no: this.page_no,
+          page_size: 10,
+          name: this.name,
+          order_by: this.order_by,
+          category_id: this.category_id,
+          max_price: this.max_price,
+          min_price: this.min_price,
+          target: this.target,
+          disease_id: this.disease,
+          level: this.level
+        });
+        this.page_no++;
+        this.res.push(...res.data.list);
+        this.has_next = res.data.has_next;
+      }
     },
     changeSec(value) {
       var levelStr = "1-" + this.level;
@@ -384,6 +438,7 @@ export default {
         }
       }
       this.popupVisible = false;
+      this.initPageList()
       this.searchPkg();
     },
     typeAction(item) {
@@ -392,6 +447,7 @@ export default {
       } else {
         this.category_id = item;
       }
+      this.initPageList()
       this.searchPkg();
     },
     clearSearchInfo(type) {
@@ -401,6 +457,7 @@ export default {
         this.max_price = 0;
       }
       this.popupVisible = false;
+      this.initPageList()
       this.searchPkg();
     },
     toDetail(id) {

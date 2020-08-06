@@ -137,12 +137,13 @@ export default {
   name: "mineDetail",
   data() {
     return {
-      page: 0,
+      page_no: 1,
       list: [],
+      has_next: 1,
       error: false,
       finished: false,
       loading: false,
-      isDrawback:false,
+      isDrawback: false,
       activeName: "",
       titleList: [
         {
@@ -176,7 +177,7 @@ export default {
         ids: 0,
         val: ""
       },
-      columns2:[
+      columns2: [
         {
           id: 3,
           label: "买多了/不想买了"
@@ -240,7 +241,56 @@ export default {
     this.listInit();
     this.getList();
   },
-
+  mounted() {
+    function getScrollTop() {
+      var scrollTop = 0,
+        bodyScrollTop = 0,
+        documentScrollTop = 0;
+      if (document.body) {
+        bodyScrollTop = document.body.scrollTop;
+      }
+      if (document.documentElement) {
+        documentScrollTop = document.documentElement.scrollTop;
+      }
+      scrollTop =
+        bodyScrollTop - documentScrollTop > 0
+          ? bodyScrollTop
+          : documentScrollTop;
+      return scrollTop;
+    }
+    //文档的总高度
+    function getScrollHeight() {
+      var scrollHeight = 0,
+        bodyScrollHeight = 0,
+        documentScrollHeight = 0;
+      if (document.body) {
+        bodyScrollHeight = document.body.scrollHeight;
+      }
+      if (document.documentElement) {
+        documentScrollHeight = document.documentElement.scrollHeight;
+      }
+      scrollHeight =
+        bodyScrollHeight - documentScrollHeight > 0
+          ? bodyScrollHeight
+          : documentScrollHeight;
+      return scrollHeight;
+    }
+    //浏览器视口的高度
+    function getWindowHeight() {
+      var windowHeight = 0;
+      if (document.compatMode == "CSS1Compat") {
+        windowHeight = document.documentElement.clientHeight;
+      } else {
+        windowHeight = document.body.clientHeight;
+      }
+      return windowHeight;
+    }
+    window.onscroll = () => {
+      if (getScrollTop() + getWindowHeight() == getScrollHeight()) {
+        this.getList();
+      }
+    };
+  },
   methods: {
     toDetile(order_num, state) {
       let name = "";
@@ -253,6 +303,7 @@ export default {
       });
     },
     changeTab(e) {
+      document.documentElement.scrollTop = 0;
       this.activeName = e;
       this.listInit();
       this.getList();
@@ -273,16 +324,21 @@ export default {
     },
     listInit() {
       this.list = [];
-      this.page = 0;
+      this.page_no = 1;
+      this.has_next = 1;
+      document.documentElement.scrollTop = 0
     },
     async getList(flag) {
-      this.page++;
-      const res = await ordersList({
-        page_size: 10,
-        page_no: 1,
-        status: this.activeName == 1 ? undefined : this.activeName
-      });
-      this.list = this.list.concat(...res.data.list);
+      if (this.has_next == 1) {
+        const res = await ordersList({
+          page_size: 10,
+          page_no: this.page_no,
+          status: this.activeName == 1 ? undefined : this.activeName
+        });
+        this.list.push(...res.data.list);
+        this.page_no++;
+        this.has_next = res.data.has_next;
+      }
     },
     async payNow(row) {
       const data = {
@@ -363,8 +419,9 @@ export default {
     async reason(row) {
       const data = {
         order_id: row.order_id,
-        [this.isDrawback?"refund_reason_id":"cancel_reason_id"]: this.arr.ids,
-        [this.isDrawback?"refund_reason_remark":"remark"]: this.message
+        [this.isDrawback ? "refund_reason_id" : "cancel_reason_id"]: this.arr
+          .ids,
+        [this.isDrawback ? "refund_reason_remark" : "remark"]: this.message
       };
       if (this.isDrawback) {
         const res = await refund_order(data);
