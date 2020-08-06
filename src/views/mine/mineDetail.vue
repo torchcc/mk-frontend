@@ -310,7 +310,7 @@ export default {
     },
     numprice(ele) {
       let num = 0;
-      ele.aggregated_order_items.map(item => {
+      ele.aggregated_order_items&&ele.aggregated_order_items.map(item => {
         num += (item.pkg_price / 100) * item.pkg_count;
       });
       return num.toFixed(2);
