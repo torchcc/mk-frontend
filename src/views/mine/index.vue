@@ -142,7 +142,7 @@ export default {
 <style lang="scss">
 .mine_body {
   width: 100%;
-  min-height: 93.2vh;
+  min-height:calc(100vh - 60px);
   background-color: rgb(245, 245, 245);
 }
 

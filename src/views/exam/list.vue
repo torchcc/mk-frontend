@@ -146,7 +146,7 @@
           </div>
         </div>
       </div>
-      <div style="color:#ccc;text-align:center;font-size:14px;">没有更多了...</div>
+      <div style="color:#ccc;text-align:center;font-size:14px;">{{has_next?"加载中...":"没有更多了..."}}</div>
     </div>
   </div>
 </template>

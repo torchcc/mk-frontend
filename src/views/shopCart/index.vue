@@ -40,8 +40,17 @@
                 </div>
               </div>
             </div>
+          
           </div>
         </div>
+        <div v-if="!orderList.length">
+          <van-empty description="什么都没有搜到">
+            <van-button round type="danger" class="bottom-button" @click="toHome">
+    去预约体检
+  </van-button>
+          </van-empty>
+          
+          </div>
       </div>
 
       <van-submit-bar :price="price" button-text="提交订单" @submit="order">
@@ -80,6 +89,9 @@ export default {
     this.price = num;
   },
   methods: {
+    toHome(){
+      this.$router.push({name:"examList"})
+    },
     goPkg(item){
       this.$router.push({
         name:"examInfo",
@@ -167,7 +179,8 @@ export default {
 }
 .inner {
   background: #f5f5f5;
-  height: 100vh;
+  min-height: calc(100vh - 180px);
+  padding-top: 60px;
   .btn {
     width: 76%;
     border-radius: 20px;
@@ -177,8 +190,6 @@ export default {
     transform: translateX(-50%);
   }
   .pad {
-    margin-top: 40px;
-    padding-top: 1px;
     .cart_card {
       height: auto;
       margin: 30px 16px;
