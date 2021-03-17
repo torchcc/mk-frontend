@@ -12,11 +12,11 @@ def getLatestVersion(branch) {
 def build(branch) {
     echo '****************************** vue start... ******************************'
     echo 'going to build branch ' + branch
-    sh "sudo mv /home/ubuntu/docker_data/nginx/data/html/dist /home/ubuntu/docker_data/nginx/data/html/last_dist"
+    sh "mv /home/ubuntu/docker_data/nginx/data/html/dist /home/ubuntu/docker_data/nginx/data/html/last_dist"
     sh "cnpm install"
     sh "rm -r ./dist/*"
     sh "npm run build"
-    sh "sudo mv ./dist /home/ubuntu/docker_data/nginx/data/html/dist"
+    sh "mv ./dist /home/ubuntu/docker_data/nginx/data/html/dist"
 }
 
 pipeline {
