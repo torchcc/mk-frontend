@@ -13,7 +13,7 @@ def build(branch) {
     echo '****************************** vue start... ******************************'
     echo 'going to build branch ' + branch
     sh "mv -f /home/ubuntu/docker_data/nginx/data/html/dist /home/ubuntu/docker_data/nginx/data/html/last_dist"
-    sh "npm install"
+    sh "cnpm install"
     sh "rm -rf ./dist/*"
     sh "npm run build"
     sh "mv -f ./dist /home/ubuntu/docker_data/nginx/data/html/dist"
@@ -25,6 +25,9 @@ pipeline {
     environment {
         scmVars = null
     }
+    tools {
+       nodejs 'nodejs-8'
+    }
 
     triggers {
         githubPush()
@@ -35,7 +38,7 @@ pipeline {
             steps {
                 echo 'Preparing Env...'
                 // need to install workspace plugin
-                cleanWs()
+//                 cleanWs()
                 checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: '47238156-6f3a-4339-9495-12d51b6c9577', url: 'git@github.com:Torchcc/mk-frontend.git']]])
                 echo "checkout to path ${env.WORKSPACE}"
             }
