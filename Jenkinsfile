@@ -13,8 +13,9 @@ def build(branch) {
     echo '****************************** vue start... ******************************'
     echo 'going to build branch ' + branch
     sh "if [ -d /home/ubuntu/docker_data/nginx/data/html/dist ]; then mv /home/ubuntu/docker_data/nginx/data/html/dist /home/ubuntu/docker_data/nginx/data/html/last_dist; fi"
-    sh "cnpm install"
+    sh "npm install"
     sh "if [ -d ./dist ]; then rm -r ./dist/*; fi"
+    sh "npm rebuild node-sass"
     sh "npm run build"
     sh "mv ./dist /home/ubuntu/docker_data/nginx/data/html/dist"
 }
