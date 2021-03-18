@@ -26,7 +26,7 @@ pipeline {
         scmVars = null
     }
     tools {
-       nodejs 'nodejs-8'
+       nodejs 'nodejs-15'
     }
 
     triggers {
