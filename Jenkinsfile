@@ -10,12 +10,17 @@ def getLatestVersion(branch) {
 }
 
 def build(branch) {
-    echo '****************************** vue start... ******************************'
     echo 'going to build branch ' + branch
-    sh "if [ -d /home/ubuntu/docker_data/nginx/data/html/dist ]; then mv /home/ubuntu/docker_data/nginx/data/html/dist /home/ubuntu/docker_data/nginx/data/html/last_dist; fi"
-    sh "if [ ! -d node_modules ]; then npm install; fi"
-    sh "if [ -d ./dist ]; then rm -r ./dist/*; fi"
-    sh "npm rebuild node-sass"
+    sh '''if [ -d /home/ubuntu/docker_data/nginx/data/html/dist ]; then
+            if [-d /home/ubuntu/docker_data/nginx/data/html/last_dist]; then
+                rm -r /home/ubuntu/docker_data/nginx/data/html/last_dist
+            fi
+            mv /home/ubuntu/docker_data/nginx/data/html/dist /home/ubuntu/docker_data/nginx/data/html/last_dist
+        fi'''
+    sh '''if [ ! -d node_modules ]; then
+            npm install
+        fi'''
+//     sh "npm rebuild node-sass"
     sh "npm run build"
     sh "mv ./dist /home/ubuntu/docker_data/nginx/data/html/dist"
 }
