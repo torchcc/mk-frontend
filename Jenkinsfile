@@ -13,7 +13,7 @@ def build(branch) {
     echo 'going to build branch ' + branch
     sh '''if [ -d /home/ubuntu/docker_data/nginx/data/html/dist ]; then
             if [-d /home/ubuntu/docker_data/nginx/data/html/last_dist]; then
-                rm -r /home/ubuntu/docker_data/nginx/data/html/last_dist/*
+                rm -r /home/ubuntu/docker_data/nginx/data/html/last_dist
             fi
             mv /home/ubuntu/docker_data/nginx/data/html/dist /home/ubuntu/docker_data/nginx/data/html/last_dist
         fi'''
